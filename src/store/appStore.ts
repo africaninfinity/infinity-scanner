@@ -5,10 +5,10 @@ import { AppSettings, DocumentEntry, FilterType } from '../types';
 
 const defaultSettings: AppSettings = {
   theme: 'light',
-  defaultFilter: 'Auto Enhance',
+  defaultFilter: 'Original',
   pdfQuality: 'Balanced',
-  autoEdgeDetection: true,
-  ocrEnabled: true,
+  autoEdgeDetection: false,
+  ocrEnabled: false,
 };
 
 type StoreState = {
@@ -26,35 +26,7 @@ type StoreState = {
 export const useAppStore = create<StoreState>()(
   persist(
     (set) => ({
-      documents: [
-        {
-          id: 'sample-1',
-          name: 'Quarterly Summary',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          pages: [
-            {
-              id: 'sample-page-1',
-              uri: 'https://images.unsplash.com/photo-1455390582262-044cdead277a',
-              filter: 'Document',
-              brightness: 100,
-              contrast: 110,
-              rotation: 0,
-              width: 1200,
-              height: 1600,
-              ocrText: 'Quarterly summary. Revenue increased by 18% year-over-year.',
-              corners: [
-                { x: 0.2, y: 0.18 },
-                { x: 0.82, y: 0.18 },
-                { x: 0.9, y: 0.84 },
-                { x: 0.12, y: 0.84 },
-              ],
-            },
-          ],
-          pageCount: 1,
-          ocrText: 'Quarterly summary. Revenue increased by 18% year-over-year.',
-        },
-      ],
+      documents: [],
       settings: defaultSettings,
       searchQuery: '',
       setSearchQuery: (value: string) => set({ searchQuery: value }),
@@ -88,10 +60,10 @@ export const useAppStore = create<StoreState>()(
 
 export const FILTERS: FilterType[] = [
   'Original',
-  'Auto Enhance',
-  'Black & White',
   'Grayscale',
+  'Black & White',
+  'High Contrast',
+  'Auto Enhance',
   'Color',
   'Document',
-  'High Contrast',
 ];
