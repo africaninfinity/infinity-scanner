@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "Infinity Scanner",
+    "slug": "infinity-scanner",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Infinity Scanner to access your camera to scan documents."
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow Infinity Scanner to access your photos.",
+          "savePhotosPermission": "Allow Infinity Scanner to save photos to your library."
+        }
+      ]
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTabletMode": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow Infinity Scanner to access your camera to scan documents.",
+        "NSPhotoLibraryUsageDescription": "Allow Infinity Scanner to access your photo library.",
+        "NSPhotoLibraryAddUsageDescription": "Allow Infinity Scanner to save scanned documents to your photo library."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "scheme": "infinityscanner",
+    "description": "A modern mobile document scanner app for scanning, enhancing, and exporting documents as PDF or images."
+  }
+}
