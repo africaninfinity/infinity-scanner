@@ -28,7 +28,7 @@ export const ActionButton = ({ label, onPress, variant = 'primary', disabled = f
                 ? theme.colors.card
                 : 'transparent',
           borderColor: variant === 'secondary' ? theme.colors.border : 'transparent',
-          opacity: disabled ? 0.6 : pressed ? 0.9 : 1,
+          opacity: disabled ? 0.6 : pressed ? 0.85 : 1,
         },
       ]}
     >
@@ -36,10 +36,7 @@ export const ActionButton = ({ label, onPress, variant = 'primary', disabled = f
         style={[
           styles.label,
           {
-            color:
-              variant === 'primary'
-                ? '#ffffff'
-                : theme.colors.text,
+            color: variant === 'primary' ? '#ffffff' : theme.colors.text,
           },
         ]}
       >

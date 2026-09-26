@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { getTheme } from '../theme';
 import { useAppStore } from '../store/appStore';
 import { ActionButton } from '../components/ActionButton';
@@ -13,55 +13,80 @@ export const SettingsScreen = ({ onBack }: SettingsScreenProps) => {
   const { settings, updateSettings, setTheme } = useAppStore();
   const theme = getTheme(settings.theme);
 
+  const handlePdfQuality = () => {
+    const options = ['Draft', 'Balanced', 'High'];
+    const current = options.indexOf(settings.pdfQuality);
+    const next = options[(current + 1) % options.length];
+    updateSettings({ pdfQuality: next as 'Draft' | 'Balanced' | 'High' });
+  };
+
+  const handleDefaultFilter = () => {
+    const filters = ['Original', 'Auto Enhance', 'Black & White', 'Grayscale', 'Color', 'Document', 'High Contrast'];
+    const current = filters.indexOf(settings.defaultFilter);
+    const next = filters[(current + 1) % filters.length];
+    updateSettings({ defaultFilter: next as any });
+  };
+
   return (
     <View style={[styles.screen, { backgroundColor: theme.colors.background }]}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <View style={styles.header}>
+        <Pressable onPress={onBack}>
+          <Text style={{ color: theme.colors.primary, fontSize: 18, fontWeight: '700' }}>← Back</Text>
+        </Pressable>
         <Text style={[styles.title, { color: theme.colors.text }]}>Settings</Text>
+      </View>
 
+      <ScrollView contentContainerStyle={styles.content}>
         <SectionCard title="Appearance">
-          <View style={styles.row}>
-            <Text style={{ color: theme.colors.text }}>Theme</Text>
-            <Switch
-              value={settings.theme === 'dark'}
-              onValueChange={(value) => setTheme(value ? 'dark' : 'light')}
-            />
+          <View style={[styles.row, { borderBottomColor: theme.colors.border }]}>
+            <Text style={{ color: theme.colors.text, fontSize: 15, flex: 1 }}>Theme</Text>
+            <Switch value={settings.theme === 'dark'} onValueChange={(value) => setTheme(value ? 'dark' : 'light')} />
           </View>
         </SectionCard>
 
         <SectionCard title="Scanning">
-          <View style={styles.row}>
-            <Text style={{ color: theme.colors.text }}>Default scan filter</Text>
-            <Text style={{ color: theme.colors.muted }}>{settings.defaultFilter}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={{ color: theme.colors.text }}>PDF quality</Text>
-            <Text style={{ color: theme.colors.muted }}>{settings.pdfQuality}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={{ color: theme.colors.text }}>Auto edge detection</Text>
+          <Pressable onPress={handleDefaultFilter} style={[styles.row, { borderBottomColor: theme.colors.border }]}>
+            <Text style={{ color: theme.colors.text, fontSize: 15, flex: 1 }}>Default filter</Text>
+            <Text style={{ color: theme.colors.primary, fontWeight: '700' }}>{settings.defaultFilter}</Text>
+          </Pressable>
+
+          <Pressable onPress={handlePdfQuality} style={[styles.row, { borderBottomColor: theme.colors.border }]}>
+            <Text style={{ color: theme.colors.text, fontSize: 15, flex: 1 }}>PDF quality</Text>
+            <Text style={{ color: theme.colors.primary, fontWeight: '700' }}>{settings.pdfQuality}</Text>
+          </Pressable>
+
+          <View style={[styles.row, { borderBottomColor: theme.colors.border }]}>
+            <Text style={{ color: theme.colors.text, fontSize: 15, flex: 1 }}>Auto edge detection</Text>
             <Switch
               value={settings.autoEdgeDetection}
               onValueChange={(value) => updateSettings({ autoEdgeDetection: value })}
             />
           </View>
+
           <View style={styles.row}>
-            <Text style={{ color: theme.colors.text }}> OCR</Text>
-            <Switch
-              value={settings.ocrEnabled}
-              onValueChange={(value) => updateSettings({ ocrEnabled: value })}
-            />
+            <Text style={{ color: theme.colors.text, fontSize: 15, flex: 1 }}>OCR enabled</Text>
+            <Switch value={settings.ocrEnabled} onValueChange={(value) => updateSettings({ ocrEnabled: value })} />
           </View>
         </SectionCard>
 
         <SectionCard title="About">
-          <Text style={{ color: theme.colors.muted, lineHeight: 20 }}>
-            Infinity Scanner provides a clean, mobile-first scanning workflow for physical documents, notes, forms, and receipts.
+          <Text style={{ color: theme.colors.muted, lineHeight: 20, fontSize: 14 }}>
+            Infinity Scanner v1.0.0
+          </Text>
+          <Text style={{ color: theme.colors.muted, lineHeight: 20, fontSize: 13, marginTop: 10 }}>
+            A modern mobile document scanner for capturing, enhancing, and exporting documents as PDF or image.
+          </Text>
+          <Text style={{ color: theme.colors.muted, lineHeight: 20, fontSize: 13, marginTop: 10 }}>
+            Documents are stored locally on your device. No cloud upload required.
           </Text>
         </SectionCard>
 
         <SectionCard title="Privacy">
-          <Text style={{ color: theme.colors.muted, lineHeight: 20 }}>
-            Documents are stored locally on the device. No cloud upload is required for the core scanning workflow.
+          <Text style={{ color: theme.colors.muted, lineHeight: 20, fontSize: 13 }}>
+            Camera access is required to capture documents. Photo library access is used to save scans to your device.
+          </Text>
+          <Text style={{ color: theme.colors.muted, lineHeight: 20, fontSize: 13, marginTop: 10 }}>
+            All document data is stored locally. No information is sent to any server.
           </Text>
         </SectionCard>
       </ScrollView>
@@ -77,21 +102,30 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
-  content: {
+  header: {
     paddingHorizontal: 18,
-    paddingTop: 18,
-    paddingBottom: 120,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '800',
-    marginBottom: 18,
+    flex: 1,
+    textAlign: 'center',
+  },
+  content: {
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    paddingBottom: 120,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
   },
   footer: {
     position: 'absolute',

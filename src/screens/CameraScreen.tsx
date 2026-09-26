@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Camera, CameraType } from 'expo-camera';
 import { getTheme } from '../theme';
@@ -15,8 +15,10 @@ type CameraScreenProps = {
 export const CameraScreen = ({ onCapture, onBack, autoEdgeDetection }: CameraScreenProps) => {
   const { settings } = useAppStore();
   const theme = getTheme(settings.theme);
+  const cameraRef = useRef<Camera>(null);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [cameraReady, setCameraReady] = useState(false);
+  const [isCapturing, setIsCapturing] = useState(false);
 
   useEffect(() => {
     if (!permission) {
@@ -25,6 +27,8 @@ export const CameraScreen = ({ onCapture, onBack, autoEdgeDetection }: CameraScr
   }, [permission, requestPermission]);
 
   const handleCapture = async () => {
+    if (isCapturing) return;
+    
     if (!permission?.granted) {
       const result = await requestPermission();
       if (!result.granted) {
@@ -33,21 +37,31 @@ export const CameraScreen = ({ onCapture, onBack, autoEdgeDetection }: CameraScr
       }
     }
 
+    if (!cameraReady || !cameraRef.current) {
+      Alert.alert('Camera not ready', 'Please wait for camera to initialize.');
+      return;
+    }
+
     try {
-      const photo = await Camera.getCameraPermissionsAsync();
-      if (photo.granted && cameraReady) {
-        const photoRef = await (global as any).cameraRef?.takePictureAsync({ quality: 0.8 });
-        if (photoRef?.uri) {
-          onCapture(photoRef.uri);
-        }
+      setIsCapturing(true);
+      const photo = await cameraRef.current.takePictureAsync({ quality: 0.8 });
+      if (photo?.uri) {
+        onCapture(photo.uri);
       }
     } catch (error) {
+      console.error('Capture error:', error);
       Alert.alert('Capture failed', 'The camera could not process the image.');
+    } finally {
+      setIsCapturing(false);
     }
   };
 
   if (!permission) {
-    return <View style={[styles.centered, { backgroundColor: theme.colors.background }]} />;
+    return (
+      <View style={[styles.centered, { backgroundColor: theme.colors.background }]}>
+        <Text style={[styles.title, { color: theme.colors.text }]}>Loading camera...</Text>
+      </View>
+    );
   }
 
   if (!permission.granted) {
@@ -55,7 +69,9 @@ export const CameraScreen = ({ onCapture, onBack, autoEdgeDetection }: CameraScr
       <View style={[styles.centered, { backgroundColor: theme.colors.background }]}>
         <Text style={[styles.title, { color: theme.colors.text }]}>Camera permission required</Text>
         <Text style={[styles.subtitle, { color: theme.colors.muted }]}>Please enable the camera to scan documents.</Text>
-        <ActionButton label="Allow Camera" onPress={() => requestPermission()} />
+        <View style={styles.buttonContainer}>
+          <ActionButton label="Allow Camera" onPress={() => requestPermission()} />
+        </View>
       </View>
     );
   }
@@ -66,9 +82,7 @@ export const CameraScreen = ({ onCapture, onBack, autoEdgeDetection }: CameraScr
         style={StyleSheet.absoluteFillObject}
         type={CameraType.back}
         onCameraReady={() => setCameraReady(true)}
-        ref={(ref) => {
-          (global as any).cameraRef = ref;
-        }}
+        ref={cameraRef}
       />
 
       <ScannerOverlay />
@@ -77,11 +91,11 @@ export const CameraScreen = ({ onCapture, onBack, autoEdgeDetection }: CameraScr
         <Pressable onPress={onBack} style={styles.closeButton}>
           <Text style={styles.closeText}>✕</Text>
         </Pressable>
-        <Text style={styles.statusText}>{autoEdgeDetection ? 'Auto detect active' : 'Manual capture mode'}</Text>
+        <Text style={styles.statusText}>{autoEdgeDetection ? 'Auto detect' : 'Manual mode'}</Text>
       </View>
 
       <View style={styles.bottomBar}>
-        <ActionButton label="Capture" onPress={handleCapture} />
+        <ActionButton label={isCapturing ? 'Capturing...' : 'Capture'} onPress={handleCapture} disabled={isCapturing || !cameraReady} />
       </View>
     </View>
   );
@@ -101,11 +115,16 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '800',
     marginBottom: 12,
+    textAlign: 'center',
   },
   subtitle: {
     textAlign: 'center',
     fontSize: 14,
     marginBottom: 18,
+  },
+  buttonContainer: {
+    width: '100%',
+    marginTop: 12,
   },
   topBar: {
     position: 'absolute',
@@ -115,9 +134,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    zIndex: 10,
   },
   closeButton: {
-    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
     width: 42,
     height: 42,
     borderRadius: 21,
@@ -133,7 +153,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 12,
     fontWeight: '700',
-    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 999,
@@ -143,5 +163,6 @@ const styles = StyleSheet.create({
     bottom: 28,
     left: 24,
     right: 24,
+    zIndex: 10,
   },
 });

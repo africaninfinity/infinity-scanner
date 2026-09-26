@@ -16,10 +16,9 @@ export const BottomNav = ({ active, onHome, onLibrary, onScanner, onSettings }: 
   const theme = getTheme(settings.theme);
 
   const items = [
-    { key: 'home', label: 'Home', onPress: onHome },
-    { key: 'library', label: 'Library', onPress: onLibrary },
-    { key: 'camera', label: 'Scan', onPress: onScanner },
-    { key: 'settings', label: 'Settings', onPress: onSettings },
+    { key: 'home', label: '🏠 Home', onPress: onHome },
+    { key: 'library', label: '📚 Library', onPress: onLibrary },
+    { key: 'settings', label: '⚙️ Settings', onPress: onSettings },
   ];
 
   return (
@@ -30,7 +29,11 @@ export const BottomNav = ({ active, onHome, onLibrary, onScanner, onSettings }: 
           <Pressable
             key={item.key}
             onPress={item.onPress}
-            style={[styles.tab, isActive && { backgroundColor: theme.colors.primary }]}
+            style={({ pressed }) => [
+              styles.tab,
+              isActive && { backgroundColor: theme.colors.primary },
+              pressed && { opacity: 0.8 },
+            ]}
           >
             <Text style={[styles.label, { color: isActive ? '#ffffff' : theme.colors.text }]}>{item.label}</Text>
           </Pressable>
@@ -44,7 +47,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     borderTopWidth: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
     paddingVertical: 8,
     gap: 8,
   },
@@ -56,7 +59,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   label: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600',
   },
 });

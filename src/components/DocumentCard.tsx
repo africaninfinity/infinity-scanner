@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getTheme } from '../theme';
 import { useAppStore } from '../store/appStore';
 import { DocumentEntry } from '../types';
@@ -16,7 +16,11 @@ export const DocumentCard = ({ document, onPress }: DocumentCardProps) => {
   const imageSource = document.pages[0]?.uri ?? '';
 
   return (
-    <View style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
+      activeOpacity={0.7}
+    >
       {imageSource ? (
         <Image source={{ uri: imageSource }} style={styles.thumb} resizeMode="cover" />
       ) : (
@@ -24,12 +28,14 @@ export const DocumentCard = ({ document, onPress }: DocumentCardProps) => {
       )}
 
       <View style={styles.content}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>{document.name}</Text>
+        <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={2}>
+          {document.name}
+        </Text>
         <Text style={[styles.meta, { color: theme.colors.muted }]}>
-          {formatDocumentDate(document.createdAt)} • {document.pageCount} pages
+          {formatDocumentDate(document.createdAt)} • {document.pageCount} page{document.pageCount !== 1 ? 's' : ''}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -42,8 +48,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   thumb: {
-    width: 92,
-    height: 92,
+    width: 100,
+    height: 100,
     backgroundColor: '#dfe6ef',
   },
   content: {

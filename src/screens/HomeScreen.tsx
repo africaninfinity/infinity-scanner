@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { getTheme } from '../theme';
 import { useAppStore } from '../store/appStore';
 import { ActionButton } from '../components/ActionButton';
@@ -34,19 +34,19 @@ export const HomeScreen = ({
 
   return (
     <View style={[styles.screen, { backgroundColor: theme.colors.background }]}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.topbar}>
           <View>
             <Text style={[styles.eyebrow, { color: theme.colors.muted }]}>Infinity Scanner</Text>
             <Text style={[styles.title, { color: theme.colors.text }]}>Smart document scans</Text>
           </View>
-          <TouchableOpacity onPress={onSettings} style={[styles.iconButton, { backgroundColor: theme.colors.card }]}>
-            <Text style={{ color: theme.colors.text, fontSize: 20 }}>⚙️</Text>
-          </TouchableOpacity>
+          <Pressable onPress={onSettings} style={[styles.iconButton, { backgroundColor: theme.colors.card }]}>
+            <Text style={{ color: theme.colors.text, fontSize: 22 }}>⚙️</Text>
+          </Pressable>
         </View>
 
         <View style={[styles.searchBox, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
-          <Text style={{ color: theme.colors.muted, fontSize: 18 }}>⌕</Text>
+          <Text style={{ color: theme.colors.muted, fontSize: 18 }}>🔍</Text>
           <TextInput
             value={searchQuery}
             onChangeText={onSearch}
@@ -57,7 +57,7 @@ export const HomeScreen = ({
         </View>
 
         <View style={styles.buttonRow}>
-          <ActionButton label="Scan Document" onPress={onScan} />
+          <ActionButton label="📷 Scan Document" onPress={onScan} />
         </View>
 
         <View style={styles.secondaryRow}>
@@ -67,22 +67,22 @@ export const HomeScreen = ({
 
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Recent documents</Text>
-          <TouchableOpacity onPress={onLibrary}>
-            <Text style={[styles.link, { color: theme.colors.primary }]}>See all</Text>
-          </TouchableOpacity>
+          <Pressable onPress={onLibrary}>
+            <Text style={[styles.link, { color: theme.colors.primary }]}>See all →</Text>
+          </Pressable>
         </View>
 
         {documents.length > 0 ? (
           documents.slice(0, 5).map((doc) => (
-            <TouchableOpacity key={doc.id} onPress={() => onOpen(doc.id)}>
+            <Pressable key={doc.id} onPress={() => onOpen(doc.id)}>
               <DocumentCard document={doc} onPress={() => onOpen(doc.id)} />
-            </TouchableOpacity>
+            </Pressable>
           ))
         ) : (
           <View style={[styles.empty, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
-            <Text style={[styles.emptyTitle, { color: theme.colors.text }]}>No documents yet</Text>
+            <Text style={[styles.emptyTitle, { color: theme.colors.text }]}>📄 No documents yet</Text>
             <Text style={[styles.emptyText, { color: theme.colors.muted }]}>
-              Scan your first document to populate the library.
+              Scan your first document to get started.
             </Text>
           </View>
         )}
@@ -110,16 +110,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     textTransform: 'uppercase',
-    letterSpacing: 1,
+    letterSpacing: 0.5,
   },
   title: {
     fontSize: 28,
     fontWeight: '800',
   },
   iconButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
+    width: 48,
+    height: 48,
+    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -163,13 +163,15 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderWidth: 1,
     padding: 18,
+    alignItems: 'center',
   },
   emptyTitle: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: '700',
     marginBottom: 8,
   },
   emptyText: {
     fontSize: 13,
+    textAlign: 'center',
   },
 });
