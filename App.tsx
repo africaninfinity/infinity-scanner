@@ -9,7 +9,7 @@ import { HomeScreen } from './src/screens/HomeScreen';
 import { LibraryScreen } from './src/screens/LibraryScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { BottomNav } from './src/components/BottomNav';
-import { ScanPage } from './src/types';
+import { ScanPage, DocumentEntry } from './src/types';
 
 export type ScreenName = 'home' | 'camera' | 'editor' | 'library' | 'settings';
 
@@ -53,7 +53,7 @@ export default function App() {
   const handleSaveDocument = (name: string, pages: ScanPage[]) => {
     if (!pages.length) return;
 
-    const doc = {
+    const doc: DocumentEntry = {
       id: `${Date.now()}`,
       name: name.trim() || 'Untitled Document',
       createdAt: new Date().toISOString(),
@@ -66,6 +66,7 @@ export default function App() {
     addDocument(doc);
     setSessionPages([]);
     setSessionName('New Document');
+    setActiveDocumentId(null);
     setScreen('home');
   };
 
@@ -80,22 +81,7 @@ export default function App() {
   };
 
   const handleBack = () => {
-    if (screen === 'editor') {
-      setScreen('home');
-      return;
-    }
-    if (screen === 'camera') {
-      setScreen('home');
-      return;
-    }
-    if (screen === 'library') {
-      setScreen('home');
-      return;
-    }
-    if (screen === 'settings') {
-      setScreen('home');
-      return;
-    }
+    setActiveDocumentId(null);
     setScreen('home');
   };
 
