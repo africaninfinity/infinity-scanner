@@ -26,11 +26,8 @@
         }
       ]
     ],
-    "assetBundlePatterns": [
-      "**/*"
-    ],
     "ios": {
-      "supportsTabletMode": true,
+      "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow Infinity Scanner to access your camera to scan documents.",
         "NSPhotoLibraryUsageDescription": "Allow Infinity Scanner to access your photo library.",
@@ -38,20 +35,20 @@
       }
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
       "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
-      ]
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "adaptiveIcon": {
+        "backgroundColor": "#0f172a",
+        "foregroundImage": "./assets/adaptive-icon.png"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "scheme": "infinityscanner",
-    "description": "A modern mobile document scanner app for scanning, enhancing, and exporting documents as PDF or images."
+    "description": "A modern mobile document scanner app with document detection, enhancement, multi-page support, and PDF export."
   }
 }
